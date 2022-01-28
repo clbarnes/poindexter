@@ -1,0 +1,13 @@
+[package]
+name = "poindexter"
+version = "0.1.0"
+authors = ["Chris Barnes <cbarnes@mrc-lmb.cam.ac.uk>"]
+edition = "2021"
+rust = "1.55"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+num-traits = "0.2"
+interpolation = "0.2"
