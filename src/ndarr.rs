@@ -1,3 +1,4 @@
+//! Simple implementation of an N-dimensional array, mainly for testing.
 use crate::traits::BoundedIndexable;
 
 pub enum Order {
@@ -12,6 +13,7 @@ impl Default for Order {
 }
 
 impl Order {
+    /// Convert an array of dimensional indices into a linear index; None if out of bounds.
     pub fn index<const D: usize>(&self, shape: &[usize; D], index: &[usize; D]) -> Option<usize> {
         let mut total = 0;
         match self {
@@ -41,6 +43,7 @@ impl Order {
     }
 }
 
+/// ND array backed by a Vec.
 pub struct VecNDArray<T, const D: usize> {
     data: Vec<T>,
     shape: [usize; D],
@@ -48,6 +51,7 @@ pub struct VecNDArray<T, const D: usize> {
 }
 
 impl<T, const D: usize> VecNDArray<T, D> {
+    /// Checks that all axes have nonzero length, and that the given shape matches the data length.
     pub fn new(data: Vec<T>, shape: [usize; D], order: Order) -> Result<Self, &'static str> {
         let mut prod = 1;
         for s in shape {
@@ -62,6 +66,7 @@ impl<T, const D: usize> VecNDArray<T, D> {
         Ok(Self::new_unchecked(data, shape, order))
     }
 
+    /// Skips checks.
     pub fn new_unchecked(data: Vec<T>, shape: [usize; D], order: Order) -> Self {
         Self { data, shape, order }
     }

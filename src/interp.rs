@@ -1,8 +1,10 @@
+//! Work in progress: Interpolation of continuous coordinates into discrete space.
 use crate::ndarr::VecNDArray;
 use crate::traits::{Idx, UnboundedIndexable};
 use interpolation::Lerp;
 use std::marker::PhantomData;
 
+/// Type of interpolation.
 pub enum Interpolation {
     Linear,
     Quadratic,
@@ -10,6 +12,8 @@ pub enum Interpolation {
 }
 
 impl Interpolation {
+    /// Find the 1D indices of the relevant local data points,
+    /// and how far between the min and max the requested data point is.
     fn factors(&self, loc: f64) -> (Vec<isize>, f64) {
         match self {
             Self::Linear => {

@@ -1,12 +1,17 @@
+//! Utilities for extending an array's domain with the same range.
 use crate::adapt::{Adapter, Adapter1D, AdapterND};
 
 #[derive(Copy, Clone, Debug)]
 pub enum ExtenderType {
+    /// Find the nearest existing point.
     Nearest,
+    /// max_index + 1 = min_index
     Wrap,
+    /// max_index + 1 = max_index; max_index + 2 = max_index - 1, etc.
     Reflect,
 }
 
+/// Adapter1D which snaps the given dimension coordinate to the real dimension coordinate where its data should be found.
 #[derive(Copy, Clone, Debug)]
 pub struct Extender1D {
     length: usize,
@@ -61,6 +66,7 @@ impl Adapter1D<isize, usize> for Extender1D {
     }
 }
 
+/// Adapter to map a whole coordinate to a coordinate where the data actually exists.
 pub struct Extender<const D: usize> {
     adapter: AdapterND<isize, usize, Extender1D, D>,
 }

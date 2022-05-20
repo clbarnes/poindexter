@@ -1,15 +1,21 @@
+//! Adapt coordinates in one space into another space.
 use crate::traits::Idx;
 use std::marker::PhantomData;
 use std::ops::{Add, Mul};
 
+/// Something which is able to adapt a single dimension of a coordinate.
 pub trait Adapter1D<In: Idx, Out: Idx> {
+    /// Adapt a single dimension of a coordinate into another.
     fn adapt(&self, idx: In) -> Out;
 }
 
+/// Something which is able to adapt a whole coordinate.
 pub trait Adapter<In: Idx, Out: Idx, const D: usize> {
+    /// Adapt one coordinate into another.
     fn adapt(&self, idx: &[In; D]) -> [Out; D];
 }
 
+/// An Adapter for N-D coordinates comprised of N Adapter1Ds.
 pub struct AdapterND<In: Idx, Out: Idx, Ad: Adapter1D<In, Out>, const D: usize> {
     pub adapters: [Ad; D],
     _in: PhantomData<In>,
@@ -26,6 +32,7 @@ impl<In: Idx, Out: Idx, Ad: Adapter1D<In, Out>, const D: usize> AdapterND<In, Ou
     }
 }
 
+/// Utility applying a function to an index array by mapping a function across it and some other argument array.
 fn idx_zip<In: Idx, Out: Idx, T, F, const D: usize>(
     idx: &[In; D],
     arr2: &[T; D],
@@ -49,6 +56,8 @@ impl<In: Idx, Out: Idx, Ad: Adapter1D<In, Out>, const D: usize> Adapter<In, Out,
     }
 }
 
+/// Adapter which scales a coordinate:
+/// the input coordinates are multiplied by the scale factors to produce the output coordinates.
 #[derive(Copy, Clone, Debug)]
 pub struct Scale<I: Idx + Mul, const D: usize> {
     factors: [I; D],
@@ -60,6 +69,8 @@ impl<I: Idx + Mul<Output = I>, const D: usize> Adapter<I, I, D> for Scale<I, D> 
     }
 }
 
+/// Adapter with offsets/ translates a coordinate:
+/// the factor is added to the input coordinate.
 #[derive(Copy, Clone, Debug)]
 pub struct Offset<I: Idx + Add, const D: usize> {
     factors: [I; D],
